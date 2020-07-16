@@ -8,7 +8,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.geometry.*;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Label;
@@ -16,25 +15,19 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Random;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.Node;
-
-public class Project extends Application {
+import javafx.application.Platform;
+import java.util.Vector;
+public class k extends Application {
 	@Override
 	public void start(Stage primaryStage) {
-
 		CheckerPane checker = new CheckerPane(10, 100);
-		// 객체 생성
+		// 사냥꾼 객체 생성
 		Hunter hunter = new Hunter();
 		Random r = new Random();
-		/*
-		 * checker.addNode(hunter.imageView, 1, 5); hunter.setLocation(0, 6);
-		 * checker.getChildren().add(hunter.imageView);
-		 */
+
 		Text text = new Text("Hunter's Hp : " + hunter.getHp());
 		Text textScore = new Text("Your Score : " + hunter.getScore());
 		Text textIsPossible = new Text(hunter.getPotionPossible() + " Potion Left");
@@ -42,7 +35,7 @@ public class Project extends Application {
 		BorderPane pane = new BorderPane();
 		pane.setPadding(new Insets(20, 20, 20, 10));
 
-		// setting 화면
+		// setting 화면 만들기
 		GridPane labelPane = new GridPane();
 		labelPane.setPadding(new Insets(2, 2, 2, 2));
 		labelPane.setAlignment(Pos.CENTER);
@@ -50,27 +43,27 @@ public class Project extends Application {
 		labelPane.setStyle("-fx-border-color: black");
 		labelPane.setVgap(30);
 
-		Label tigerNum = new Label("Set Number of Tiger :(1~5) ");
+		Label tigerNum = new Label("Set Number of Tiger :(0~5) ");
 		TextField tigerField = new TextField();
 		tigerField.setPromptText("Enter 1~5");
 		labelPane.add(tigerNum, 0, 0);
 		labelPane.add(tigerField, 1, 0);
 
-		Label rabbitNum = new Label("Set Number of Rabbit :(1~10) ");
+		Label rabbitNum = new Label("Set Number of Rabbit :(0~10) ");
 		TextField rabbitField = new TextField();
 		rabbitField.setPromptText("Enter 1~10");
 		labelPane.add(rabbitNum, 0, 1);
 		labelPane.add(rabbitField, 1, 1);
 
-		Label grassNum = new Label("Set Number of Grass :(1~10) ");
+		Label grassNum = new Label("Set Number of Grass :(0~10) ");
 		TextField grassField = new TextField();
 		grassField.setPromptText("Enter 1~10");
 		labelPane.add(grassNum, 0, 2);
 		labelPane.add(grassField, 1, 2);
 
-		Label trapNum = new Label("Set Number of Trap :(1~4) ");
+		Label trapNum = new Label("Set Number of Trap :(1~3) ");
 		TextField trapField = new TextField();
-		trapField.setPromptText("Enter 1~4");
+		trapField.setPromptText("Enter 1~3");
 		labelPane.add(trapNum, 0, 3);
 		labelPane.add(trapField, 1, 3);
 
@@ -86,18 +79,19 @@ public class Project extends Application {
 		Button btDownLeft = new Button("Go DownLeft");
 		Button btDownRight = new Button("Go DownRight");
 		// 객체 생성
-		Tiger[] tigerArr = new Tiger[10];
-		Rabbit[] rabbitArr = new Rabbit[20];
-		Grass[] grassArr = new Grass[10];
+		Tiger[] tigerArr = new Tiger[100];
+		Rabbit[] rabbitArr = new Rabbit[100];
+		Grass[] grassArr = new Grass[100];
 		Trap[] trapArr = new Trap[4];
 		labelPane.add(btStart, 1, 4);
+		
 		// start 버튼 클릭 event
 		btStart.setOnAction(e -> {
-
 			s.setTiger(Integer.parseInt(tigerField.getText()));
 			s.setRabbit(Integer.parseInt(rabbitField.getText()));
 			s.setGrass(Integer.parseInt(grassField.getText()));
 			s.setTrap(Integer.parseInt(trapField.getText()));
+			
 			labelPane.add(btPotion, 0, 5);
 			labelPane.add(text, 0, 6);
 			labelPane.add(textIsPossible, 0, 7);
@@ -110,7 +104,8 @@ public class Project extends Application {
 			labelPane.add(btDownLeft, 0, 10);
 			labelPane.add(btDownRight, 2, 10);
 			labelPane.add(textScore, 0, 11);
-			s.setTotal(s.totalNumOfGrass + s.totalNumOfRabbit + s.totalNumOfTiger + s.totalNumOfTrap + 1);
+			
+			//랜덤으로 중복 배치
 			int location[][] = randomSelction();
 			int[] rowList = new int[30];
 			int[] colList = new int[30];
@@ -124,13 +119,14 @@ public class Project extends Application {
 				}
 			}
 
-			for (int i = 0; i < s.totalNumOfTiger; i++) {
+			for (int i = 0; i < s.getNumOfTiger(); i++) {
 				tigerArr[i] = new Tiger();
 				int j = r.nextInt(30);
 				for (int k = 0; k < 30; k++) {
 					if (rowList[j] == -1) {
 						j = r.nextInt(30);
-					} else
+					} 
+					else
 						break;
 				}
 				tigerArr[i].setLocation(rowList[j], colList[j]);
@@ -138,13 +134,14 @@ public class Project extends Application {
 				colList[j] = -1;
 				checker.getChildren().add(tigerArr[i].imageView);
 			}
-			for (int i = 0; i < s.totalNumOfRabbit; i++) {
+			for (int i = 0; i < s.getNumOfRabbit(); i++) {
 				rabbitArr[i] = new Rabbit();
 				int j = r.nextInt(30);
 				for (int k = 0; k < 30; k++) {
 					if (rowList[j] == -1) {
 						j = r.nextInt(30);
-					} else
+					} 
+					else
 						break;
 				}
 				rabbitArr[i].setLocation(rowList[j], colList[j]);
@@ -152,13 +149,14 @@ public class Project extends Application {
 				colList[j] = -1;
 				checker.getChildren().add(rabbitArr[i].imageView);
 			}
-			for (int i = 0; i < s.totalNumOfGrass; i++) {
+			for (int i = 0; i < s.getNumOfGrass(); i++) {
 				grassArr[i] = new Grass();
 				int j = r.nextInt(30);
 				for (int k = 0; k < 30; k++) {
 					if (rowList[j] == -1) {
 						j = r.nextInt(30);
-					} else
+					} 
+					else
 						break;
 				}
 				grassArr[i].setLocation(rowList[j], colList[j]);
@@ -166,15 +164,17 @@ public class Project extends Application {
 				colList[j] = -1;
 				checker.getChildren().add(grassArr[i].imageView);
 			}
-			for (int i = 0; i < s.totalNumOfTrap; i++) {
+			for (int i = 0; i < s.getNumOfTrap(); i++) {
 				trapArr[i] = new Trap();
 				int j = r.nextInt(30);
 				for (int k = 0; k < 30; k++) {
 					if (rowList[j] == -1) {
 						j = r.nextInt(30);
-					} else
+					} 
+					else
 						break;
 				}
+				//trapArr[i].setLocation(colList[j], rowList[j]);
 				trapArr[i].setLocation(rowList[j], colList[j]);
 				rowList[j] = -1;
 				colList[j] = -1;
@@ -185,12 +185,13 @@ public class Project extends Application {
 			for (int k = 0; k < 30; k++) {
 				if (rowList[hunterPosition] == -1) {
 					hunterPosition = r.nextInt(30);
-				} else
+				} 
+				else
 					break;
 			}
 			hunter.setLocation(rowList[hunterPosition], colList[hunterPosition]);
 			checker.getChildren().add(hunter.imageView);
-
+			//객체 배치 완료
 		});
 
 		// potion 사용 가능 여부 출력
@@ -201,47 +202,26 @@ public class Project extends Application {
 				text.setText("Hunter's Hp : " + hunter.getHp());
 				textIsPossible.setText(hunter.getPotionPossible() + " Potion Left");
 				System.out.print(hunter.getRow());
-			} else {
+			} 
+			else {
 				text.setText("You Can Not Use Potion!!");
 			}
 		});
 		// 버튼을 누르면 이동
 		btUp.setOnAction(e -> {
-
 			hunter.setHp(hunter.getHp() - 1);
 			text.setText("Hunter's Hp : " + hunter.getHp());
 			hunter.moveUp(checker, hunter);
-			hunter.catchObj(checker, hunter, tigerArr, rabbitArr, grassArr, trapArr, s);
-			for (int i = 0; i < s.totalNumOfTiger; i++) {
-				tigerArr[i].move(checker, tigerArr[i]);
-			}
-
-			for (int i = 0; i < s.totalNumOfRabbit; i++) {
-				rabbitArr[i].move(checker, rabbitArr[i]);
-			}
-			if (hunter.getHp() <= 0) {
-				hunter.die();
-			}
+			//객체들간의 상호작용
+			interaction(checker, hunter, tigerArr, rabbitArr, grassArr, trapArr, s);
 			textScore.setText("Your Score : " + hunter.getScore());
 		});
-
+		//이하동일
 		btRight.setOnAction(e -> {
-
 			hunter.setHp(hunter.getHp() - 1);
 			text.setText("Hunter's Hp : " + hunter.getHp());
 			hunter.moveRight(checker, hunter);
-			hunter.catchObj(checker, hunter, tigerArr, rabbitArr, grassArr, trapArr, s);
-			for (int i = 0; i < s.totalNumOfTiger; i++) {
-				tigerArr[i].move(checker, tigerArr[i]);
-			}
-
-			for (int i = 0; i < s.totalNumOfRabbit; i++) {
-				rabbitArr[i].move(checker, rabbitArr[i]);
-			}
-
-			if (hunter.getHp() <= 0) {
-				hunter.die();
-			}
+			interaction(checker, hunter, tigerArr, rabbitArr, grassArr, trapArr, s);
 			textScore.setText("Your Score : " + hunter.getScore());
 		});
 		btDown.setOnAction(e -> {
@@ -249,17 +229,7 @@ public class Project extends Application {
 			hunter.setHp(hunter.getHp() - 1);
 			text.setText("Hunter's Hp : " + hunter.getHp());
 			hunter.moveDown(checker, hunter);
-			hunter.catchObj(checker, hunter, tigerArr, rabbitArr, grassArr, trapArr, s);
-			for (int i = 0; i < s.totalNumOfTiger; i++) {
-				tigerArr[i].move(checker, tigerArr[i]);
-			}
-
-			for (int i = 0; i < s.totalNumOfRabbit; i++) {
-				rabbitArr[i].move(checker, rabbitArr[i]);
-			}
-			if (hunter.getHp() <= 0) {
-				hunter.die();
-			}
+			interaction(checker, hunter, tigerArr, rabbitArr, grassArr, trapArr, s);
 			textScore.setText("Your Score : " + hunter.getScore());
 		});
 		btLeft.setOnAction(e -> {
@@ -267,36 +237,15 @@ public class Project extends Application {
 			hunter.setHp(hunter.getHp() - 1);
 			text.setText("Hunter's Hp : " + hunter.getHp());
 			hunter.moveLeft(checker, hunter);
-			hunter.catchObj(checker, hunter, tigerArr, rabbitArr, grassArr, trapArr, s);
-			for (int i = 0; i < s.totalNumOfTiger; i++) {
-				tigerArr[i].move(checker, tigerArr[i]);
-			}
-
-			for (int i = 0; i < s.totalNumOfRabbit; i++) {
-				rabbitArr[i].move(checker, rabbitArr[i]);
-			}
-
-			if (hunter.getHp() <= 0) {
-				hunter.die();
-			}
+			interaction(checker, hunter, tigerArr, rabbitArr, grassArr, trapArr, s);
 			textScore.setText("Your Score : " + hunter.getScore());
 		});
 		btDownLeft.setOnAction(e -> {
 
 			hunter.setHp(hunter.getHp() - 1);
 			text.setText("Hunter's Hp : " + hunter.getHp());
-			hunter.moveUpLeft(checker, hunter);
-			hunter.catchObj(checker, hunter, tigerArr, rabbitArr, grassArr, trapArr, s);
-			for (int i = 0; i < s.totalNumOfTiger; i++) {
-				tigerArr[i].move(checker, tigerArr[i]);
-			}
-
-			for (int i = 0; i < s.totalNumOfRabbit; i++) {
-				rabbitArr[i].move(checker, rabbitArr[i]);
-			}
-			if (hunter.getHp() <= 0) {
-				hunter.die();
-			}
+			hunter.moveDownLeft(checker, hunter);
+			interaction(checker, hunter, tigerArr, rabbitArr, grassArr, trapArr, s);
 			textScore.setText("Your Score : " + hunter.getScore());
 		});
 		btUpRight.setOnAction(e -> {
@@ -304,53 +253,23 @@ public class Project extends Application {
 			hunter.setHp(hunter.getHp() - 1);
 			text.setText("Hunter's Hp : " + hunter.getHp());
 			hunter.moveUpRight(checker, hunter);
-			hunter.catchObj(checker, hunter, tigerArr, rabbitArr, grassArr, trapArr, s);
-			for (int i = 0; i < s.totalNumOfTiger; i++) {
-				tigerArr[i].move(checker, tigerArr[i]);
-			}
-
-			for (int i = 0; i < s.totalNumOfRabbit; i++) {
-				rabbitArr[i].move(checker, rabbitArr[i]);
-			}
-			if (hunter.getHp() <= 0) {
-				hunter.die();
-			}
+			interaction(checker, hunter, tigerArr, rabbitArr, grassArr, trapArr, s);
 			textScore.setText("Your Score : " + hunter.getScore());
 		});
 		btUpLeft.setOnAction(e -> {
 
 			hunter.setHp(hunter.getHp() - 1);
 			text.setText("Hunter's Hp : " + hunter.getHp());
-			hunter.moveDownLeft(checker, hunter);
-			hunter.catchObj(checker, hunter, tigerArr, rabbitArr, grassArr, trapArr, s);
-			for (int i = 0; i < s.totalNumOfTiger; i++) {
-				tigerArr[i].move(checker, tigerArr[i]);
-			}
-
-			for (int i = 0; i < s.totalNumOfRabbit; i++) {
-				rabbitArr[i].move(checker, rabbitArr[i]);
-			}
-			if (hunter.getHp() <= 0) {
-				hunter.die();
-			}
+			hunter.moveUpLeft(checker, hunter);
+			interaction(checker, hunter, tigerArr, rabbitArr, grassArr, trapArr, s);
 			textScore.setText("Your Score : " + hunter.getScore());
 		});
 		btDownRight.setOnAction(e -> {
-
+		
 			hunter.setHp(hunter.getHp() - 1);
 			text.setText("Hunter's Hp : " + hunter.getHp());
 			hunter.moveDownRight(checker, hunter);
-			hunter.catchObj(checker, hunter, tigerArr, rabbitArr, grassArr, trapArr, s);
-			for (int i = 0; i < s.totalNumOfTiger; i++) {
-				tigerArr[i].move(checker, tigerArr[i]);
-			}
-
-			for (int i = 0; i < s.totalNumOfRabbit; i++) {
-				rabbitArr[i].move(checker, rabbitArr[i]);
-			}
-			if (hunter.getHp() <= 0) {
-				hunter.die();
-			}
+			interaction(checker, hunter, tigerArr, rabbitArr, grassArr, trapArr, s);
 			textScore.setText("Your Score : " + hunter.getScore());
 		});
 
@@ -362,13 +281,30 @@ public class Project extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.setResizable(false);
 		primaryStage.show();
-
-		class Start {
-
-		}
-
 	}
-
+	
+	public void interaction(CheckerPane checker, Hunter hunter, Tiger[] tigerArr, Rabbit[] rabbitArr, Grass[] grassArr, Trap[] trapArr, Set s) {
+		hunter.catchObj(checker, hunter, tigerArr, rabbitArr, grassArr, trapArr, s);
+		for (int i = 0; i < s.getNumOfTiger(); i++) {
+			tigerArr[i].move(checker, tigerArr[i]);
+			tigerArr[i].catchObj(checker, hunter, tigerArr, tigerArr[i], rabbitArr, grassArr, trapArr, s);
+		}
+		if(tigerArr[0] != null)
+			tigerArr[0].starve(checker, tigerArr, s);
+		
+		
+		for (int i = 0; i < s.getNumOfRabbit(); i++) {
+			rabbitArr[i].move(checker, rabbitArr[i]);
+			rabbitArr[i].catchObj(checker, hunter, rabbitArr, rabbitArr[i], tigerArr, grassArr, trapArr, s);
+		}
+		if(rabbitArr[0] != null)
+			rabbitArr[0].starve(checker, rabbitArr, s);
+		
+		if (hunter.getHp() <= 0) {
+			hunter.die();
+			Platform.exit();
+		}
+	}
 	// 중복 없이 랜덤한 자리 뽑기
 	public static int[][] randomSelction() {
 		int[][] arr = new int[10][10];
@@ -409,26 +345,21 @@ public class Project extends Application {
 		private int totalNumOfRabbit = 0;
 		private int totalNumOfGrass = 0;
 		private int totalNumOfTrap = 0;
-		private int totalNumOfObj = 0;
 
-		public void setTiger(int tigerNum) {
-			totalNumOfTiger = tigerNum;
+		public void setTiger(int num) {
+			totalNumOfTiger = num;
 		}
 
-		public void setRabbit(int tigerNum) {
-			totalNumOfRabbit = tigerNum;
+		public void setRabbit(int num) {
+			totalNumOfRabbit = num;
 		}
 
-		public void setGrass(int tigerNum) {
-			totalNumOfGrass = tigerNum;
+		public void setGrass(int num) {
+			totalNumOfGrass = num;
 		}
 
-		public void setTrap(int tigerNum) {
-			totalNumOfTrap = tigerNum;
-		}
-
-		public void setTotal(int totalNumOfObj) {
-			this.totalNumOfObj = totalNumOfObj;
+		public void setTrap(int num) {
+			totalNumOfTrap = num;
 		}
 
 		public int getNumOfTiger() {
@@ -446,10 +377,6 @@ public class Project extends Application {
 		public int getNumOfTrap() {
 			return totalNumOfTrap;
 		}
-
-		public int getNumOfTotal() {
-			return totalNumOfObj;
-		}
 	}
 
 	// 게임 판 만들기
@@ -460,41 +387,38 @@ public class Project extends Application {
 
 		CheckerPane(int n, int squareSize) {
 			for (int col = 0; col < n; col++) {
-
 				for (int row = 0; row < n; row++) {
 					Rectangle rect = new Rectangle(0, 0, squareSize, squareSize);
 					rect.setFill(Color.WHITE);
 					rect.setStroke(Color.BLACK);
-
 					super.add(rect, col, row);
-
 				}
 			}
 		}
-
+		public void finishOfGame(CheckerPane c,Tiger[] t, Rabbit[] r, Set s) {
+			for(int i=0; i<s.getNumOfTiger();i++) {
+				c.getChildren().remove(t[i].imageView);
+			}
+			for(int i=0; i<s.getNumOfRabbit();i++) {
+				c.getChildren().remove(r[i].imageView);
+			}
+		}
 		public void addNode(ImageView i, int col, int row) {
 			super.add(i, col, row);
 		}
-
-		public void removeImage(ImageView i) {
-			getChildren().remove(i);
-		}
-
 	}
 
 //클래스
 
 	class Hunter extends CheckerPane {
-
-		private int hunterLevel = 4;
 		private int Hp = 100;
 		private int potionNum = 3;
 		private int potionPossible = 3;
 		private int score;
 		private int row;
 		private int col;
-		Image image = new Image("hunter.jpg");
-		ImageView imageView = new ImageView(image);
+		public Image image = new Image("hunter.jpg");
+		public ImageView imageView = new ImageView(image);
 
 		Hunter() {
 			imageView.setFitHeight(100);
@@ -539,122 +463,132 @@ public class Project extends Application {
 			return score;
 		}
 
+		// 이동 메소드
 		public void moveUp(CheckerPane c, Hunter h) {
 			if (getRow() <= 0) {
+				// 가장자리 예외처리
 				Alert alert = new Alert(AlertType.WARNING);
 				alert.setTitle("Move Problem");
 				alert.setHeaderText("Can Not Move!");
 				alert.setContentText("You Can Not Move Up!");
 				alert.showAndWait();
-
-			} else {
+			} 
+			else {
 				int row = getRow();
 				int col = getCol();
 				c.getChildren().remove(h.imageView);
 				h.setLocation(col, row - 1);
 				c.getChildren().add(h.imageView);
-
 			}
 
 		}
 
 		public void moveLeft(CheckerPane c, Hunter h) {
 			if (getCol() <= 0) {
+				// 가장자리 예외처리
 				Alert alert = new Alert(AlertType.WARNING);
 				alert.setTitle("Move Problem");
 				alert.setHeaderText("Can Not Move!");
 				alert.setContentText("You Can Not Move Left!");
 				alert.showAndWait();
 
-			} else {
+			} 
+			else {
 				int row = getRow();
 				int col = getCol();
 				c.getChildren().remove(h.imageView);
 				h.setLocation(col - 1, row);
 				c.getChildren().add(h.imageView);
-
 			}
 		}
 
 		public void moveDown(CheckerPane c, Hunter h) {
 			if (getRow() >= 9) {
+				// 가장자리 예외처리
 				Alert alert = new Alert(AlertType.WARNING);
 				alert.setTitle("Move Problem");
 				alert.setHeaderText("Can Not Move!");
 				alert.setContentText("You Can Not Move Down!");
 				alert.showAndWait();
-			} else {
+			} 
+			else {
 				int row = getRow();
 				int col = getCol();
 				c.getChildren().remove(h.imageView);
 				h.setLocation(col, row + 1);
 				c.getChildren().add(h.imageView);
-
 			}
 		}
 
 		public void moveRight(CheckerPane c, Hunter h) {
 			if (getCol() >= 9) {
+				// 가장자리 예외처리
 				Alert alert = new Alert(AlertType.WARNING);
 				alert.setTitle("Move Problem");
 				alert.setHeaderText("Can Not Move!");
 				alert.setContentText("You Can Not Move Right!");
 				alert.showAndWait();
 
-			} else {
+			} 
+			else {
 				int row = getRow();
 				int col = getCol();
 				c.getChildren().remove(h.imageView);
 				h.setLocation(col + 1, row);
 				c.getChildren().add(h.imageView);
-
 			}
 		}
 
 		public void moveUpRight(CheckerPane c, Hunter h) {
 			if (getCol() >= 9 || getRow() <= 0) {
+				// 가장자리 예외처리
 				Alert alert = new Alert(AlertType.WARNING);
 				alert.setTitle("Move Problem");
 				alert.setHeaderText("Can Not Move!");
 				alert.setContentText("You Can Not Move UpRight!");
 				alert.showAndWait();
 
-			} else {
+			} 
+			else {
 				int row = getRow();
 				int col = getCol();
 				c.getChildren().remove(h.imageView);
 				h.setLocation(col + 1, row - 1);
 				c.getChildren().add(h.imageView);
-
 			}
 		}
 
 		public void moveUpLeft(CheckerPane c, Hunter h) {
 			if (getCol() <= 0 || getRow() <= 0) {
+				// 가장자리 예외처리
 				Alert alert = new Alert(AlertType.WARNING);
 				alert.setTitle("Move Problem");
 				alert.setHeaderText("Can Not Move!");
 				alert.setContentText("You Can Not Move UpLeft!");
 				alert.showAndWait();
 
-			} else {
+			} 
+			else {
+				// 가장자리 예외처리
 				int row = getRow();
 				int col = getCol();
 				c.getChildren().remove(h.imageView);
-				h.setLocation(col - 1, row + 1);
+				h.setLocation(col - 1, row - 1);
 				c.getChildren().add(h.imageView);
 			}
 		}
 
 		public void moveDownRight(CheckerPane c, Hunter h) {
 			if (getCol() >= 9 || getRow() >= 9) {
+				// 가장자리 예외처리//
 				Alert alert = new Alert(AlertType.WARNING);
 				alert.setTitle("Move Problem");
 				alert.setHeaderText("Can Not Move!");
-				alert.setContentText("You Can Not Move UpLeft!");
+				alert.setContentText("You Can Not Move DownRight!");
 				alert.showAndWait();
 
-			} else {
+			} 
+			else {
 				int row = getRow();
 				int col = getCol();
 				c.getChildren().remove(h.imageView);
@@ -664,18 +598,20 @@ public class Project extends Application {
 		}
 
 		public void moveDownLeft(CheckerPane c, Hunter h) {
-			if (getCol() >= 9 || getRow() >= 9) {
+			if (getCol() <= 0 || getRow() >= 9) {
+				// 가장자리 예외처리
 				Alert alert = new Alert(AlertType.WARNING);
 				alert.setTitle("Move Problem");
 				alert.setHeaderText("Can Not Move!");
-				alert.setContentText("You Can Not Move UpLeft!");
+				alert.setContentText("You Can Not Move DownLeft!");
 				alert.showAndWait();
 
-			} else {
+			} 
+			else {
 				int row = getRow();
 				int col = getCol();
 				c.getChildren().remove(h.imageView);
-				h.setLocation(col - 1, row - 1);
+				h.setLocation(col - 1, row + 1);
 				c.getChildren().add(h.imageView);
 			}
 		}
@@ -713,38 +649,32 @@ public class Project extends Application {
 				}
 
 			}
-			for (int i = 0; i < s.getNumOfRabbit(); i++) {
+			/*for (int i = 0; i < s.getNumOfGrass(); i++) {
 				if (g[i].getRow() == row && g[i].getCol() == col) {
 					c.getChildren().remove(g[i].imageView);
 					for (int j = i; j < s.getNumOfGrass() - 1; j++) {
 						g[j] = g[j + 1];
 					}
-					s.setGrass(s.totalNumOfGrass - 1);
+					s.setGrass(s.getNumOfGrass() - 1);
 					h.setScore(h.getScore() + 1);
 				}
 
-			}
+			}*/
 			for (int i = 0; i < s.getNumOfTrap(); i++) {
 				if (tr[i].getRow() == col && tr[i].getCol() == row) {
 					c.getChildren().clear();
 					h.die();
-
+					Platform.exit();
 				}
 			}
 
 		}
-
-		public int getLevel() {
-			return hunterLevel;
-		}
-
 	}
 
 	class Tiger extends CheckerPane {
-		private int tigerLevel = 3;
-
 		private int row;
 		private int col;
+		private int life = 4;
 		Image image = new Image("tiger.jpg");
 		ImageView imageView = new ImageView(image);
 
@@ -752,7 +682,15 @@ public class Project extends Application {
 			imageView.setFitHeight(100);
 			imageView.setFitWidth(100);
 		}
-
+		public void setLife(int life) {
+			this.life = life;
+		}
+		public int getLife() {
+			return life;
+		}
+		public void eatRabbit() {
+			setLife(4);
+		}
 		public void setLocation(int col, int row) {
 			super.addNode(imageView, col, row);
 			this.row = row;
@@ -766,130 +704,158 @@ public class Project extends Application {
 		public int getCol() {
 			return col;
 		}
-
 		public void move(CheckerPane c, Tiger t) {
-			Random r1 = new Random();
-			int whereToGo = r1.nextInt(4);
-			switch (whereToGo) {
-			case 0:// up
-				if (getRow() <= 0) {
-					int row = t.getRow();
-					int col = t.getCol();
-					c.getChildren().remove(t.imageView);
-					t.setLocation(col, row + 1);
-					c.getChildren().add(t.imageView);
+				t.setLife(t.getLife()-1);
+				Random r1 = new Random();
+				int whereToGo = r1.nextInt(4);
+				switch (whereToGo) {
+				case 0:// up
+					if (getRow() <= 0) {
+						int row = t.getRow();
+						int col = t.getCol();
+						c.getChildren().remove(t.imageView);
+						t.setLocation(col, row + 1);
+						c.getChildren().add(t.imageView);
 
-				} else {
-					int row = getRow();
-					int col = getCol();
-					c.getChildren().remove(t.imageView);
-					t.setLocation(col, row - 1);
-					c.getChildren().add(t.imageView);
+					} 
+					else {
+						int row = getRow();
+						int col = getCol();
+						c.getChildren().remove(t.imageView);
+						t.setLocation(col, row - 1);
+						c.getChildren().add(t.imageView);
 
+					}
+					break;
+
+				case 1:// right
+					if (getCol() <= 0) {
+						int row = t.getRow();
+						int col = t.getCol();
+						c.getChildren().remove(t.imageView);
+						t.setLocation(col + 1, row);
+						c.getChildren().add(t.imageView);
+
+					} 
+					else {
+						int row = getRow();
+						int col = getCol();
+						c.getChildren().remove(t.imageView);
+						t.setLocation(col - 1, row);
+						c.getChildren().add(t.imageView);
+
+					}
+					break;
+				case 2:// down
+					if (getRow() >= 9) {
+						int row = t.getRow();
+						int col = t.getCol();
+						c.getChildren().remove(t.imageView);
+						t.setLocation(col, row - 1);
+						c.getChildren().add(t.imageView);
+
+					} 
+					else {
+						int row = getRow();
+						int col = getCol();
+						c.getChildren().remove(t.imageView);
+						t.setLocation(col, row + 1);
+						c.getChildren().add(t.imageView);
+
+					}
+					break;
+				case 3:// left
+					if (getCol() >= 9) {
+						int row = t.getRow();
+						int col = t.getCol();
+						c.getChildren().remove(t.imageView);
+						t.setLocation(col - 1, row);
+						c.getChildren().add(t.imageView);
+
+					} 
+					else {
+						int row = getRow();
+						int col = getCol();
+						c.getChildren().remove(t.imageView);
+						t.setLocation(col + 1, row);
+						c.getChildren().add(t.imageView);
+
+					}
+					break;
 				}
-				break;
-
-			case 1:// right
-				if (getCol() <= 0) {
-					int row = t.getRow();
-					int col = t.getCol();
-					c.getChildren().remove(t.imageView);
-					t.setLocation(col + 1, row);
-					c.getChildren().add(t.imageView);
-
-				} else {
-					int row = getRow();
-					int col = getCol();
-					c.getChildren().remove(t.imageView);
-					t.setLocation(col - 1, row);
-					c.getChildren().add(t.imageView);
-
+				
+		}
+		public void starve(CheckerPane c, Tiger[] tArr, Set s) {
+			for(int i=0;i < s.getNumOfTiger();i++) {
+				if(tArr[i].getLife()<=0) {
+					int row = tArr[i].getRow();
+					int col = tArr[i].getCol();
+					c.getChildren().remove(tArr[i].imageView);
+					
+					if(tArr[i].getRow() == row && tArr[i].getCol() == col) {
+						for (int j = i; j < s.getNumOfTiger() - 1; j++) {
+							tArr[j] = tArr[j + 1];
+						}
+					}
+					i--;
+					s.setTiger(s.getNumOfTiger() - 1);	
 				}
-				break;
-			case 2:// down
-				if (getRow() >= 9) {
-					int row = t.getRow();
-					int col = t.getCol();
-					c.getChildren().remove(t.imageView);
-					t.setLocation(col, row - 1);
-					c.getChildren().add(t.imageView);
-
-				} else {
-					int row = getRow();
-					int col = getCol();
-					c.getChildren().remove(t.imageView);
-					t.setLocation(col, row + 1);
-					c.getChildren().add(t.imageView);
-
-				}
-				break;
-			case 3:// left
-				if (getCol() >= 9) {
-					int row = t.getRow();
-					int col = t.getCol();
-					c.getChildren().remove(t.imageView);
-					t.setLocation(col - 1, row);
-					c.getChildren().add(t.imageView);
-
-				} else {
-					int row = getRow();
-					int col = getCol();
-					c.getChildren().remove(t.imageView);
-					t.setLocation(col + 1, row);
-					c.getChildren().add(t.imageView);
-
-				}
-				break;
 			}
+			
 		}
+		public void catchObj(CheckerPane c, Hunter h, Tiger[] t, Tiger tiger, Rabbit[] r, Grass[] g, Trap[] tr, Set s) {
+			int row = tiger.getRow();
+			int col = tiger.getCol();
 
-		public void die(CheckerPane c, Tiger t) {
-			c.getChildren().remove(t.imageView);
-			t.setLocation(0, 1000);
-		}
-
-		public void catchObj(CheckerPane c, Hunter h, Tiger t, int tigerIdx, Tiger[] tArr, Rabbit[] r, Grass[] g,
-				Trap[] tr, Set s) {
-
-			int row = t.getRow();
-			int col = t.getCol();
-
-			if (t.getRow() == row && t.getCol() == col) {
-				c.getChildren().remove(t.imageView);
-				for (int j = tigerIdx; j < s.getNumOfTiger(); j++) {
-					tArr[j] = tArr[j + 1];
+			if (h.getRow() == row && h.getCol() == col) {
+				c.getChildren().remove(tiger.imageView);
+				for(int i=0;i < s.getNumOfTiger();i++) {
+					if(t[i].getRow() == row && t[i].getCol() == col) {
+						for (int j = i; j < s.getNumOfTiger() - 1; j++) {
+							t[j] = t[j + 1];
+						}
+					}
 				}
-				s.setTiger(s.totalNumOfTiger - 1);
+				s.setTiger(s.getNumOfTiger() - 1);
 				h.setScore(h.getScore() + 10);
 			}
-
+			
 			for (int i = 0; i < s.getNumOfRabbit(); i++) {
 				if (r[i].getRow() == row && r[i].getCol() == col) {
+					c.getChildren().remove(r[i].imageView);
+					
 					for (int j = i; j < s.getNumOfRabbit() - 1; j++) {
 						r[j] = r[j + 1];
 					}
+					tiger.eatRabbit();
+					s.setRabbit(s.getNumOfRabbit() - 1);
 				}
-				s.setRabbit(s.totalNumOfRabbit - 1);
+
 			}
 			for (int i = 0; i < s.getNumOfTrap(); i++) {
 				if (tr[i].getRow() == col && tr[i].getCol() == row) {
-					for (int j = tigerIdx; j < s.getNumOfTiger(); j++) {
-						tArr[j] = tArr[j + 1];
+					c.getChildren().remove(tiger.imageView);
+					for(int k=0; k<s.getNumOfTiger();k++) {
+						if(t[k].getRow() == row && t[k].getCol() == col) {
+							for (int j = k; j < s.getNumOfTiger() - 1; j++) {
+								t[j] = t[j + 1];
+							}
+						}
 					}
-					s.setTiger(s.totalNumOfTiger - 1);
+					s.setTiger(s.getNumOfTiger() - 1);
 				}
 			}
 		}
-
-		public int getLevel() {
-			return tigerLevel;
+		
+		public void breed(CheckerPane c, Tiger t, Tiger[] tArr, Set s) {
+			
 		}
 	}
 
 	class Rabbit extends CheckerPane {
-		private int rabbitLevel = 2;
 		private int row;
 		private int col;
+		private int life = 4;
 		Image image = new Image("rabbit.jpg");
 		ImageView imageView = new ImageView(image);
 
@@ -897,7 +863,15 @@ public class Project extends Application {
 			imageView.setFitHeight(100);
 			imageView.setFitWidth(100);
 		}
-
+		public void setLife(int life) {
+			this.life = life;
+		}
+		public int getLife() {
+			return life;
+		}
+		public void eatGrass() {
+			setLife(4);
+		}
 		public void setLocation(int col, int row) {
 			super.addNode(imageView, col, row);
 			this.row = row;
@@ -911,122 +885,160 @@ public class Project extends Application {
 		public int getCol() {
 			return col;
 		}
-
-		public void move(CheckerPane c, Rabbit t) {
-			Random r1 = new Random();
-			int whereToGo = r1.nextInt(4);
-			switch (whereToGo) {
-			case 0:// up
-				if (getRow() <= 0) {
-					int row = t.getRow();
-					int col = t.getCol();
-					c.getChildren().remove(t.imageView);
-					t.setLocation(col, row + 1);
-					c.getChildren().add(t.imageView);
-
-				} else {
-					int row = getRow();
-					int col = getCol();
-					c.getChildren().remove(t.imageView);
-					t.setLocation(col, row - 1);
-					c.getChildren().add(t.imageView);
-
+		public void starve(CheckerPane c, Rabbit[] tArr, Set s) {
+			for(int i=0;i < s.getNumOfRabbit();i++) {
+				if(tArr[i].getLife()<=0) {
+					int row = tArr[i].getRow();
+					int col = tArr[i].getCol();
+					c.getChildren().remove(tArr[i].imageView);
+					
+					if(tArr[i].getRow() == row && tArr[i].getCol() == col) {
+						for (int j = i; j < s.getNumOfRabbit() - 1; j++) {
+							tArr[j] = tArr[j + 1];
+						}
+					}
+					i--;
+					s.setRabbit(s.getNumOfRabbit() - 1);	
 				}
-				break;
-
-			case 1:// right
-				if (getCol() <= 0) {
-					int row = t.getRow();
-					int col = t.getCol();
-					c.getChildren().remove(t.imageView);
-					t.setLocation(col + 1, row);
-					c.getChildren().add(t.imageView);
-
-				} else {
-					int row = getRow();
-					int col = getCol();
-					c.getChildren().remove(t.imageView);
-					t.setLocation(col - 1, row);
-					c.getChildren().add(t.imageView);
-
-				}
-				break;
-			case 2:// down
-				if (getRow() >= 9) {
-					int row = t.getRow();
-					int col = t.getCol();
-					c.getChildren().remove(t.imageView);
-					t.setLocation(col, row - 1);
-					c.getChildren().add(t.imageView);
-
-				} else {
-					int row = getRow();
-					int col = getCol();
-					c.getChildren().remove(t.imageView);
-					t.setLocation(col, row + 1);
-					c.getChildren().add(t.imageView);
-
-				}
-				break;
-			case 3:// left
-				if (getCol() >= 9) {
-					int row = t.getRow();
-					int col = t.getCol();
-					c.getChildren().remove(t.imageView);
-					t.setLocation(col - 1, row);
-					c.getChildren().add(t.imageView);
-
-				} else {
-					int row = getRow();
-					int col = getCol();
-					c.getChildren().remove(t.imageView);
-					t.setLocation(col + 1, row);
-					c.getChildren().add(t.imageView);
-
-				}
-				break;
 			}
+			
 		}
+		public void move(CheckerPane c, Rabbit t) {
+				t.setLife(t.getLife()-1);
+				Random r1 = new Random();
+				int whereToGo = r1.nextInt(4);
+				switch (whereToGo) {
+				case 0:// up
+					if (getRow() <= 0) {
+						int row = t.getRow();
+						int col = t.getCol();
+						c.getChildren().remove(t.imageView);
+						t.setLocation(col, row + 1);
+						c.getChildren().add(t.imageView);
 
-		public void die(CheckerPane c, Rabbit r) {
-			c.getChildren().remove(r.imageView);
-			r.setLocation(0, 1000);
+					} 
+					else {
+						int row = getRow();
+						int col = getCol();
+						c.getChildren().remove(t.imageView);
+						t.setLocation(col, row - 1);
+						c.getChildren().add(t.imageView);
+
+					}
+					break;
+
+				case 1:// right
+					if (getCol() <= 0) {
+						int row = t.getRow();
+						int col = t.getCol();
+						c.getChildren().remove(t.imageView);
+						t.setLocation(col + 1, row);
+						c.getChildren().add(t.imageView);
+
+					} 
+					else {
+						int row = getRow();
+						int col = getCol();
+						c.getChildren().remove(t.imageView);
+						t.setLocation(col - 1, row);
+						c.getChildren().add(t.imageView);
+
+					}
+					break;
+				case 2:// down
+					if (getRow() >= 9) {
+						int row = t.getRow();
+						int col = t.getCol();
+						c.getChildren().remove(t.imageView);
+						t.setLocation(col, row - 1);
+						c.getChildren().add(t.imageView);
+
+					} 
+					else {
+						int row = getRow();
+						int col = getCol();
+						c.getChildren().remove(t.imageView);
+						t.setLocation(col, row + 1);
+						c.getChildren().add(t.imageView);
+
+					}
+					break;
+				case 3:// left
+					if (getCol() >= 9) {
+						int row = t.getRow();
+						int col = t.getCol();
+						c.getChildren().remove(t.imageView);
+						t.setLocation(col - 1, row);
+						c.getChildren().add(t.imageView);
+
+					} 
+					else {
+						int row = getRow();
+						int col = getCol();
+						c.getChildren().remove(t.imageView);
+						t.setLocation(col + 1, row);
+						c.getChildren().add(t.imageView);
+
+					}
+					break;
+				}
+			
 		}
+		public void catchObj(CheckerPane c, Hunter h, Rabbit[] r, Rabbit rabbit, Tiger[] t, Grass[] g, Trap[] tr, Set s) {
+			int row = rabbit.getRow();
+			int col = rabbit.getCol();
 
-		/*public void catchObj(CheckerPane c, Hunter h, Tiger[] t, Rabbit[] r, Grass[] g, Trap[] tr, Set s) {
-			int row = h.getRow();
-			int col = h.getCol();
-
+			if (h.getRow() == row && h.getCol() == col) {
+				c.getChildren().remove(rabbit.imageView);
+				for(int i=0;i < s.getNumOfRabbit();i++) {
+					if(r[i].getRow() == row && r[i].getCol() == col) {
+						for (int j = i; j < s.getNumOfRabbit() - 1; j++) {
+							r[j] = r[j + 1];
+						}
+					}
+				}
+				s.setRabbit(s.getNumOfRabbit() - 1);
+				h.setScore(h.getScore() + 5);
+			}
+			
 			for (int i = 0; i < s.getNumOfTiger(); i++) {
 				if (t[i].getRow() == row && t[i].getCol() == col) {
-					c.getChildren().remove(t[i].imageView);
-					for (int j = i; j < s.getNumOfTiger() - 1; j++) {
-						t[j] = t[j + 1];
+					c.getChildren().remove(rabbit.imageView);
+					for(int k = 0; k < s.getNumOfRabbit();k++) {
+						if(r[k].getRow() == row && r[k].getCol() == col) {
+							for (int j = k; j < s.getNumOfRabbit() - 1; j++) {
+								r[j] = r[j + 1];
+							}
+						}
 					}
-					s.setTiger(s.totalNumOfTiger - 1);
-					h.setScore(h.getScore() + 10);
-				}
-			}
-			for (int i = 0; i < s.getNumOfRabbit(); i++) {
-				if (r[i].getRow() == row && r[i].getCol() == col) {
-					for (int j = i; j < s.getNumOfTiger() - 1; j++) {
-						t[j] = t[j + 1];
-					}
-					s.setTiger(s.totalNumOfTiger - 1);
-					h.setScore(h.getScore() + 1);
+					s.setRabbit(s.getNumOfRabbit() - 1);
 				}
 
 			}
-
+			for (int i = 0; i < s.getNumOfGrass(); i++) {
+				if (g[i].getRow() == row && g[i].getCol() == col) {
+					rabbit.eatGrass();
+					c.getChildren().remove(g[i].imageView);
+					g[i].regrow(c,r, g[i], s);
+				}
+			}
+			for (int i = 0; i < s.getNumOfTrap(); i++) {
+				if (tr[i].getRow() == col && tr[i].getCol() == row) {
+					c.getChildren().remove(rabbit.imageView);
+					for(int k = 0; k < s.getNumOfRabbit();k++) {
+						if(r[k].getRow() == row && r[k].getCol() == col) {
+							for (int j = k; j < s.getNumOfRabbit() - 1; j++) {
+								r[j] = r[j + 1];
+							}
+						}
+					}
+					s.setRabbit(s.getNumOfRabbit() - 1);
+				}
+			}
 		}
-
-		public int getLevel() {
-			return rabbitLevel;
-		}*/
 	}
 
 	class Grass extends CheckerPane {
-		private int grassLevel = 1;
 		private int row;
 		private int col;
 		Image image = new Image("grass.jpg");
@@ -1050,19 +1062,25 @@ public class Project extends Application {
 		public int getCol() {
 			return col;
 		}
-
-		public void die(CheckerPane c, Grass g) {
-			c.getChildren().remove(g.imageView);
-			g.setLocation(0, 1300);
-		}
-
-		public int getLevel() {
-			return grassLevel;
+		public void regrow(CheckerPane c, Rabbit[] r, Grass g, Set s) {
+			Random random = new Random();
+			int rowLocation = random.nextInt(10);
+			int colLocation = random.nextInt(10);
+			g.setLocation(colLocation, rowLocation); //함정이 풀에 가려질수도있음
+			for(int i=0;i<s.getNumOfRabbit();i++) {
+				if(r[i].getRow() == rowLocation && r[i].getCol() == colLocation) {
+					regrow(c, r, g, s);
+					r[i].eatGrass();
+				}
+				else {
+					c.getChildren().add(g.imageView);
+					break;
+				}
+			}
 		}
 	}
 
 	class Trap extends CheckerPane {
-		private int trapLevel = 5;
 		private int row;
 		private int col;
 		Image image = new Image("trap.jpg");
@@ -1087,9 +1105,6 @@ public class Project extends Application {
 			return col;
 		}
 
-		public int getLevel() {
-			return trapLevel;
-		}
 	}
 
 	public static void main(String[] args) {
