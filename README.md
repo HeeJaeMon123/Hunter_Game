@@ -9,3 +9,7 @@
 - make prototype
 # 2020.07.16
 - make all functions except breed function
+# 2020.07.18
+- complete
+# 2020.07.20
+- debugging
