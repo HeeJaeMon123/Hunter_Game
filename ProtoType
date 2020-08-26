@@ -201,7 +201,7 @@ public class k extends Application {
 				hunter.potionPossible--;
 				text.setText("Hunter's Hp : " + hunter.getHp());
 				textIsPossible.setText(hunter.getPotionPossible() + " Potion Left");
-				System.out.print(hunter.getRow());
+				//System.out.print(hunter.getRow());
 			} 
 			else {
 				text.setText("You Can Not Use Potion!!");
